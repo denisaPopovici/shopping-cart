@@ -5,6 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class OrderBean implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String transactionId;
 	private String productId;
 	private int quantity;

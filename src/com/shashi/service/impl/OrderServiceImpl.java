@@ -21,8 +21,7 @@ public class OrderServiceImpl implements OrderService {
 	public String paymentSuccess(String userName, double paidAmount) {
 		String status = "Order Placement Failed!";
 
-		List<CartBean> cartItems = new ArrayList<CartBean>();
-		cartItems = new CartServiceImpl().getAllCartItems(userName);
+		List<CartBean> cartItems = new CartServiceImpl().getAllCartItems(userName);
 
 		if (cartItems.size() == 0)
 			return status;
@@ -97,6 +96,9 @@ public class OrderServiceImpl implements OrderService {
 		} catch (SQLException e) {
 			flag = false;
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return flag;
@@ -126,6 +128,9 @@ public class OrderServiceImpl implements OrderService {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return flag;
@@ -190,6 +195,9 @@ public class OrderServiceImpl implements OrderService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return orderList;
@@ -223,6 +231,9 @@ public class OrderServiceImpl implements OrderService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return orderList;
@@ -262,6 +273,9 @@ public class OrderServiceImpl implements OrderService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return orderList;

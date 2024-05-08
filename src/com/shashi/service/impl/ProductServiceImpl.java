@@ -410,6 +410,7 @@ public class ProductServiceImpl implements ProductService {
 				status = "Product Updated Successfully!";
 				// System.out.println("updated!");
 				List<DemandBean> demandList = new DemandServiceImpl().haveDemanded(prevProductId);
+				StringBuffer buff = new StringBuffer();
 
 				for (DemandBean demand : demandList) {
 
@@ -423,8 +424,9 @@ public class ProductServiceImpl implements ProductService {
 					boolean flag = new DemandServiceImpl().removeProduct(demand.getUserName(), prevProductId);
 
 					if (flag)
-						status += " And Mail Send to the customers who were waiting for this product!";
+						buff.append(" And Mail Send to the customers who were waiting for this product!");
 				}
+				status += buff.toString();
 			} else if (k > 0)
 				status = "Product Updated Successfully!";
 			else

@@ -9,6 +9,7 @@ public class ProductBean implements Serializable {
 	public ProductBean() {
 	}
 
+	private static final long serialVersionUID = 1L;
 	private String prodId;
 	private String prodName;
 	private String prodType;

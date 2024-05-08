@@ -13,7 +13,7 @@ public class DBUtil {
 	public DBUtil() {
 	}
 
-	public static Connection provideConnection() {
+	public static synchronized Connection provideConnection() {
 
 		try {
 			if (conn == null || conn.isClosed()) {

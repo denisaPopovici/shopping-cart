@@ -62,6 +62,11 @@ public class UserServiceImpl implements UserService {
 		} catch (SQLException e) {
 			status = "Error: " + e.getMessage();
 			e.printStackTrace();
+
+		} finally {
+			if (conn == null) {
+				System.out.println("Connection Failed!");
+			}
 		}
 
 		DBUtil.closeConnection(ps);
@@ -197,6 +202,9 @@ public class UserServiceImpl implements UserService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return fname;
@@ -223,6 +231,9 @@ public class UserServiceImpl implements UserService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return userAddr;

@@ -76,7 +76,6 @@ public class CartServiceImpl implements CartService {
 		DBUtil.closeConnection(con);
 		DBUtil.closeConnection(ps);
 		DBUtil.closeConnection(rs);
-		DBUtil.closeConnection(ps2);
 
 		return status;
 	}
@@ -191,7 +190,7 @@ public class CartServiceImpl implements CartService {
 
 					if (k > 0)
 						status = "Product Successfully removed from the Cart!";
-				} else if (prodQuantity <= 0) {
+				} else {
 
 					ps2 = con.prepareStatement("delete from usercart where username=? and prodid=?");
 
@@ -247,11 +246,11 @@ public class CartServiceImpl implements CartService {
 		} catch (SQLException e) {
 			flag = false;
 			e.printStackTrace();
-		}
 
-		DBUtil.closeConnection(con);
-		DBUtil.closeConnection(ps);
-		DBUtil.closeConnection(rs);
+		} finally {
+			DBUtil.closeConnection(con);
+			DBUtil.closeConnection(ps);
+		}
 
 		return flag;
 	}
@@ -352,6 +351,10 @@ public class CartServiceImpl implements CartService {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+
+		finally {
+				DBUtil.closeConnection(ps);
 		}
 
 		return count;

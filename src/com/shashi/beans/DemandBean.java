@@ -5,6 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class DemandBean implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String userName;
 	private String prodId;
 	private int demandQty;

@@ -52,11 +52,11 @@ public class OrderDetails implements Serializable {
 	}
 
 	public Timestamp getTime() {
-		return time;
+		return (Timestamp) time.clone();
 	}
 
 	public void setTime(Timestamp time) {
-		this.time = time;
+		this.time = (Timestamp) time.clone();
 	}
 
 	public InputStream getProdImage() {

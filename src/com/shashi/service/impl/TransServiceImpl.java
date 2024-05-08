@@ -31,6 +31,9 @@ public class TransServiceImpl implements TransService {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return userId;

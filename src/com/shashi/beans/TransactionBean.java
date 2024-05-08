@@ -9,6 +9,7 @@ import com.shashi.utility.IDUtil;
 @SuppressWarnings("serial")
 public class TransactionBean implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String transactionId;
 
 	private String userName;
@@ -65,7 +66,7 @@ public class TransactionBean implements Serializable {
 	public TransactionBean(String userName, Timestamp transDateTime, double transAmount) {
 		super();
 		this.userName = userName;
-		this.transDateTime = transDateTime;
+		this.transDateTime = (Timestamp) transDateTime.clone();
 		this.transactionId = IDUtil.generateTransId();
 		this.transAmount = transAmount;
 	}
@@ -74,7 +75,7 @@ public class TransactionBean implements Serializable {
 		super();
 		this.transactionId = transactionId;
 		this.userName = userName;
-		this.transDateTime = transDateTime;
+		this.transDateTime = (Timestamp) transDateTime.clone();
 		this.transAmount = transAmount;
 
 	}
@@ -96,11 +97,11 @@ public class TransactionBean implements Serializable {
 	}
 
 	public Timestamp getTransDateTime() {
-		return transDateTime;
+		return (Timestamp) transDateTime.clone();
 	}
 
 	public void setTransDateTime(Timestamp transDateTime) {
-		this.transDateTime = transDateTime;
+		this.transDateTime = (Timestamp) transDateTime.clone();
 	}
 
 	public double getTransAmount() {

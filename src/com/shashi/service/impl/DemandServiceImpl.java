@@ -150,6 +150,9 @@ public class DemandServiceImpl implements DemandService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+
+		} finally {
+			DBUtil.closeConnection(ps);
 		}
 
 		return demandList;

@@ -63,9 +63,12 @@ public class JavaMailUtil {
 			message.setText("Hey! " + recipientEmail + ", Thanks  for Signing Up with us!");
 			return message;
 
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception exception) {
 			Logger.getLogger(JavaMailUtil.class.getName()).log(Level.SEVERE, null, exception);
 		}
+
 		return null;
 
 	}
@@ -119,6 +122,8 @@ public class JavaMailUtil {
 			message.setContent(htmlTextMessage, "text/html");
 			return message;
 
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception exception) {
 			Logger.getLogger(JavaMailUtil.class.getName()).log(Level.SEVERE, null, exception);
 		}

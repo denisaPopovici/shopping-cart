@@ -8,6 +8,8 @@ public class CartBean implements Serializable {
 	public CartBean() {
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	public String userId;
 
 	public String prodId;
