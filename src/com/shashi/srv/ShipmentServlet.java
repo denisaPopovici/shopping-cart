@@ -26,6 +26,7 @@ public class ShipmentServlet extends HttpServlet {
 		super();
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -58,6 +59,7 @@ public class ShipmentServlet extends HttpServlet {
 		pw.println("<script>document.getElementById('message').innerHTML='" + status + "'</script>");
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

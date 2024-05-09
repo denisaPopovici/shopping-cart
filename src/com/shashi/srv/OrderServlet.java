@@ -20,6 +20,7 @@ import com.shashi.service.impl.OrderServiceImpl;
 public class OrderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -45,6 +46,7 @@ public class OrderServlet extends HttpServlet {
 		pw.println("<script>document.getElementById('message').innerHTML='" + status + "'</script>");
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

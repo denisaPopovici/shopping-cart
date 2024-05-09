@@ -19,17 +19,21 @@ import com.shashi.service.impl.UserServiceImpl;
 @WebServlet("/LoginSrv")
 public class LoginSrv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final String username = "username";
+	private static final String passwordStr = "password";
+	private static final String userTypeStr = "usertype";
 
 	public LoginSrv() {
 		super();
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String userName = request.getParameter("username");
-		String password = request.getParameter("password");
-		String userType = request.getParameter("usertype");
+		String userName = request.getParameter(username);
+		String password = request.getParameter(passwordStr);
+		String userType = request.getParameter(userTypeStr);
 		response.setContentType("text/html");
 
 		String status = "Login Denied! Invalid Username or password.";
@@ -43,14 +47,13 @@ public class LoginSrv extends HttpServlet {
 
 				HttpSession session = request.getSession();
 
-				session.setAttribute("username", userName);
-				session.setAttribute("password", password);
-				session.setAttribute("usertype", userType);
+				session.setAttribute(username, userName);
+				session.setAttribute(passwordStr, password);
+				session.setAttribute(userTypeStr, userType);
 
 				rd.forward(request, response);
 
 			} else {
-				// Invalid;
 				RequestDispatcher rd = request.getRequestDispatcher("login.jsp?message=" + status);
 				rd.include(request, response);
 			}
@@ -70,16 +73,15 @@ public class LoginSrv extends HttpServlet {
 
 				session.setAttribute("userdata", user);
 
-				session.setAttribute("username", userName);
-				session.setAttribute("password", password);
-				session.setAttribute("usertype", userType);
+				session.setAttribute(username, userName);
+				session.setAttribute(passwordStr, password);
+				session.setAttribute(userTypeStr, userType);
 
 				RequestDispatcher rd = request.getRequestDispatcher("userHome.jsp");
 
 				rd.forward(request, response);
 
 			} else {
-				// invalid user;
 
 				RequestDispatcher rd = request.getRequestDispatcher("login.jsp?message=" + status);
 
@@ -90,6 +92,7 @@ public class LoginSrv extends HttpServlet {
 
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

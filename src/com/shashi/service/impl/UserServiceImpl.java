@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.shashi.beans.UserBean;
 import com.shashi.constants.IUserConstants;
@@ -19,9 +21,7 @@ public class UserServiceImpl implements UserService {
 
 		UserBean user = new UserBean(userName, mobileNo, emailId, address, pinCode, password);
 
-		String status = registerUser(user);
-
-		return status;
+		return registerUser(user);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 		Connection conn = DBUtil.provideConnection();
 		PreparedStatement ps = null;
 		if (conn != null) {
-			System.out.println("Connected Successfully!");
+			Logger.getAnonymousLogger().log(Level.INFO, "Connected Successfully!");
 		}
 
 		try {
@@ -90,7 +90,6 @@ public class UserServiceImpl implements UserService {
 				flag = true;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

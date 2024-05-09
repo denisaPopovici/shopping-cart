@@ -29,6 +29,7 @@ public class UpdateToCart extends HttpServlet {
 
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
@@ -60,9 +61,7 @@ public class UpdateToCart extends HttpServlet {
 
 		if (availableQty < pQty) {
 
-			String status = cart.updateProductToCart(userId, prodId, availableQty);
-
-			status = "Only " + availableQty + " no of " + product.getProdName()
+			String status = "Only " + availableQty + " no of " + product.getProdName()
 					+ " are available in the shop! So we are adding only " + availableQty + " products into Your Cart"
 					+ "";
 
@@ -94,6 +93,7 @@ public class UpdateToCart extends HttpServlet {
 
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

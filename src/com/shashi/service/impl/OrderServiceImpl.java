@@ -16,25 +16,21 @@ import com.shashi.utility.DBUtil;
 import com.shashi.utility.MailMessage;
 
 public class OrderServiceImpl implements OrderService {
+	private static final String shipped = "shipped";
 
 	@Override
 	public String paymentSuccess(String userName, double paidAmount) {
 		String status = "Order Placement Failed!";
 
-		List<CartBean> cartItems = new ArrayList<CartBean>();
-		cartItems = new CartServiceImpl().getAllCartItems(userName);
+		List<CartBean> cartItems = new CartServiceImpl().getAllCartItems(userName);
 
-		if (cartItems.size() == 0)
+		if (cartItems.isEmpty())
 			return status;
 
 		TransactionBean transaction = new TransactionBean(userName, paidAmount);
 		boolean ordered = false;
 
 		String transactionId = transaction.getTransactionId();
-
-		// System.out.println("Transaction: "+transaction.getTransactionId()+"
-		// "+transaction.getTransAmount()+" "+transaction.getUserName()+"
-		// "+transaction.getTransDateTime());
 
 		for (CartBean item : cartItems) {
 
@@ -43,19 +39,13 @@ public class OrderServiceImpl implements OrderService {
 			OrderBean order = new OrderBean(transactionId, item.getProdId(), item.getQuantity(), amount);
 
 			ordered = addOrder(order);
-			if (!ordered)
-				break;
-			else {
+			if (ordered) {
 				ordered = new CartServiceImpl().removeAProduct(item.getUserId(), item.getProdId());
 			}
 
-			if (!ordered)
-				break;
-			else
+			if (ordered) {
 				ordered = new ProductServiceImpl().sellNProduct(item.getProdId(), item.getQuantity());
-
-			if (!ordered)
-				break;
+			}
 		}
 
 		if (ordered) {
@@ -95,7 +85,6 @@ public class OrderServiceImpl implements OrderService {
 				flag = true;
 
 		} catch (SQLException e) {
-			flag = false;
 			e.printStackTrace();
 		}
 
@@ -124,7 +113,6 @@ public class OrderServiceImpl implements OrderService {
 				flag = true;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -165,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<OrderBean> getAllOrders() {
-		List<OrderBean> orderList = new ArrayList<OrderBean>();
+		List<OrderBean> orderList = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -181,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 			while (rs.next()) {
 
 				OrderBean order = new OrderBean(rs.getString("orderid"), rs.getString("prodid"), rs.getInt("quantity"),
-						rs.getDouble("amount"), rs.getInt("shipped"));
+						rs.getDouble("amount"), rs.getInt(shipped));
 
 				orderList.add(order);
 
@@ -197,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<OrderBean> getOrdersByUserId(String emailId) {
-		List<OrderBean> orderList = new ArrayList<OrderBean>();
+		List<OrderBean> orderList = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -214,7 +202,7 @@ public class OrderServiceImpl implements OrderService {
 			while (rs.next()) {
 
 				OrderBean order = new OrderBean(rs.getString("t.transid"), rs.getString("t.prodid"),
-						rs.getInt("quantity"), rs.getDouble("t.amount"), rs.getInt("shipped"));
+						rs.getInt("quantity"), rs.getDouble("t.amount"), rs.getInt(shipped));
 
 				orderList.add(order);
 
@@ -230,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<OrderDetails> getAllOrderDetails(String userEmailId) {
-		List<OrderDetails> orderList = new ArrayList<OrderDetails>();
+		List<OrderDetails> orderList = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -254,7 +242,7 @@ public class OrderServiceImpl implements OrderService {
 				order.setAmount(rs.getString("amount"));
 				order.setTime(rs.getTimestamp("time"));
 				order.setProductId(rs.getString("prodid"));
-				order.setShipped(rs.getInt("shipped"));
+				order.setShipped(rs.getInt(shipped));
 				orderList.add(order);
 
 			}
@@ -288,7 +276,6 @@ public class OrderServiceImpl implements OrderService {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

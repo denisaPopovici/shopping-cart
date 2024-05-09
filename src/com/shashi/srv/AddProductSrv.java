@@ -23,6 +23,7 @@ import com.shashi.service.impl.ProductServiceImpl;
 public class AddProductSrv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -42,7 +43,6 @@ public class AddProductSrv extends HttpServlet {
 			response.sendRedirect("login.jsp?message=Session Expired, Login Again to Continue!");
 		}
 
-		String status = "Product Registration Failed!";
 		String prodName = request.getParameter("name");
 		String prodType = request.getParameter("type");
 		String prodInfo = request.getParameter("info");
@@ -57,13 +57,14 @@ public class AddProductSrv extends HttpServlet {
 
 		ProductServiceImpl product = new ProductServiceImpl();
 
-		status = product.addProduct(prodName, prodType, prodInfo, prodPrice, prodQuantity, prodImage);
+		String status = product.addProduct(prodName, prodType, prodInfo, prodPrice, prodQuantity, prodImage);
 
 		RequestDispatcher rd = request.getRequestDispatcher("addProduct.jsp?message=" + status);
 		rd.forward(request, response);
 
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

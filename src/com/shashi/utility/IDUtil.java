@@ -5,6 +5,10 @@ import java.util.Date;
 
 public class IDUtil {
 
+	private IDUtil(){
+
+	}
+
 	public static String generateId() {
 		String pId = null;
 

@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.shashi.beans.DemandBean;
 import com.shashi.beans.ProductBean;
@@ -14,9 +16,13 @@ import com.shashi.service.ProductService;
 import com.shashi.utility.DBUtil;
 import com.shashi.utility.IDUtil;
 import com.shashi.utility.MailMessage;
+import jdk.jfr.internal.LogLevel;
 
 public class ProductServiceImpl implements ProductService {
-
+	private static final String updateFailed = "Product Updation Failed!";
+	private static final String error = "Error: ";
+	private static final String updateSuccess = "Product Updated Successfully!";
+	private static final String select = "select * from product where pid=?";
 	@Override
 	public String addProduct(String prodName, String prodType, String prodInfo, double prodPrice, int prodQuantity,
 			InputStream prodImage) {
@@ -32,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public String addProduct(ProductBean product) {
-		String status = "Product Registration Failed!";
+		String status;
 
 		if (product.getProdId() == null)
 			product.setProdId(IDUtil.generateId());
@@ -59,11 +65,11 @@ public class ProductServiceImpl implements ProductService {
 
 			} else {
 
-				status = "Product Updation Failed!";
+				status = updateFailed;
 			}
 
 		} catch (SQLException e) {
-			status = "Error: " + e.getMessage();
+			status = error + e.getMessage();
 			e.printStackTrace();
 		}
 
@@ -100,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 		} catch (SQLException e) {
-			status = "Error: " + e.getMessage();
+			status = error + e.getMessage();
 			e.printStackTrace();
 		}
 
@@ -113,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public String updateProduct(ProductBean prevProduct, ProductBean updatedProduct) {
-		String status = "Product Updation Failed!";
+		String status = updateFailed;
 
 		if (!prevProduct.getProdId().equals(updatedProduct.getProdId())) {
 
@@ -141,10 +147,9 @@ public class ProductServiceImpl implements ProductService {
 			int k = ps.executeUpdate();
 
 			if (k > 0)
-				status = "Product Updated Successfully!";
+				status = updateSuccess;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -173,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
 			if (k > 0)
 				status = "Price Updated Successfully!";
 		} catch (SQLException e) {
-			status = "Error: " + e.getMessage();
+			status = error + e.getMessage();
 			e.printStackTrace();
 		}
 
@@ -185,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductBean> getAllProducts() {
-		List<ProductBean> products = new ArrayList<ProductBean>();
+		List<ProductBean> products = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -226,7 +231,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductBean> getAllProductsByType(String type) {
-		List<ProductBean> products = new ArrayList<ProductBean>();
+		List<ProductBean> products = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -267,7 +272,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductBean> searchAllProducts(String search) {
-		List<ProductBean> products = new ArrayList<ProductBean>();
+		List<ProductBean> products = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -330,7 +335,6 @@ public class ProductServiceImpl implements ProductService {
 				image = rs.getBytes("image");
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -351,7 +355,7 @@ public class ProductServiceImpl implements ProductService {
 		ResultSet rs = null;
 
 		try {
-			ps = con.prepareStatement("select * from product where pid=?");
+			ps = con.prepareStatement(select);
 
 			ps.setString(1, prodId);
 			rs = ps.executeQuery();
@@ -368,7 +372,6 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -380,13 +383,13 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public String updateProductWithoutImage(String prevProductId, ProductBean updatedProduct) {
-		String status = "Product Updation Failed!";
+		StringBuilder status = new StringBuilder(updateFailed);
 
 		if (!prevProductId.equals(updatedProduct.getProdId())) {
 
-			status = "Both Products are Different, Updation Failed!";
+			status = new StringBuilder("Both Products are Different, Updation Failed!");
 
-			return status;
+			return status.toString();
 		}
 
 		int prevQuantity = new ProductServiceImpl().getProductQuantity(prevProductId);
@@ -405,41 +408,42 @@ public class ProductServiceImpl implements ProductService {
 			ps.setString(6, prevProductId);
 
 			int k = ps.executeUpdate();
-			// System.out.println("prevQuantity: "+prevQuantity);
 			if ((k > 0) && (prevQuantity < updatedProduct.getProdQuantity())) {
-				status = "Product Updated Successfully!";
-				// System.out.println("updated!");
+				status = new StringBuilder(updateSuccess);
 				List<DemandBean> demandList = new DemandServiceImpl().haveDemanded(prevProductId);
 
 				for (DemandBean demand : demandList) {
 
-					String userFName = new UserServiceImpl().getFName(demand.getUserName());
-					try {
-						MailMessage.productAvailableNow(demand.getUserName(), userFName, updatedProduct.getProdName(),
-								prevProductId);
-					} catch (Exception e) {
-						System.out.println("Mail Sending Failed: " + e.getMessage());
-					}
+					mailUser(prevProductId, demand, updatedProduct);
+
 					boolean flag = new DemandServiceImpl().removeProduct(demand.getUserName(), prevProductId);
 
 					if (flag)
-						status += " And Mail Send to the customers who were waiting for this product!";
+						status.append(" And Mail Send to the customers who were waiting for this product!");
 				}
 			} else if (k > 0)
-				status = "Product Updated Successfully!";
+				status = new StringBuilder(updateSuccess);
 			else
-				status = "Product Not available in the store!";
+				status = new StringBuilder("Product Not available in the store!");
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		DBUtil.closeConnection(con);
 		DBUtil.closeConnection(ps);
-		// System.out.println("Prod Update status : "+status);
 
-		return status;
+		return status.toString();
+	}
+
+	private void mailUser(String prevProductId, DemandBean demand, ProductBean updatedProduct) {
+		String userFName = new UserServiceImpl().getFName(demand.getUserName());
+		try {
+			MailMessage.productAvailableNow(demand.getUserName(), userFName, updatedProduct.getProdName(),
+					prevProductId);
+		} catch (Exception e) {
+			Logger.getAnonymousLogger().log(Level.WARNING, "Mail Sending Failed: " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -452,7 +456,7 @@ public class ProductServiceImpl implements ProductService {
 		ResultSet rs = null;
 
 		try {
-			ps = con.prepareStatement("select * from product where pid=?");
+			ps = con.prepareStatement(select);
 
 			ps.setString(1, prodId);
 			rs = ps.executeQuery();
@@ -462,7 +466,6 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -493,7 +496,6 @@ public class ProductServiceImpl implements ProductService {
 			if (k > 0)
 				flag = true;
 		} catch (SQLException e) {
-			flag = false;
 			e.printStackTrace();
 		}
 
@@ -514,7 +516,7 @@ public class ProductServiceImpl implements ProductService {
 		ResultSet rs = null;
 
 		try {
-			ps = con.prepareStatement("select * from product where pid=?");
+			ps = con.prepareStatement(select);
 
 			ps.setString(1, prodId);
 			rs = ps.executeQuery();
@@ -524,7 +526,6 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

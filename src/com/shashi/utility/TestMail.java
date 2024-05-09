@@ -2,6 +2,9 @@ package com.shashi.utility;
 
 import jakarta.mail.MessagingException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class TestMail {
 	public static void main(String[] args) {
 		try {
@@ -20,10 +23,10 @@ public class TestMail {
 					+ "<span class='greenText'>ELLISON500</span><br><br>" + "Have a good day!<br>" + "</p>" + "</body>"
 					+ "</html>";
 			JavaMailUtil.sendMail(recipient, subject, htmlTextMessage);
-			System.out.println("Mail Sent Successfully!");
+			Logger.getAnonymousLogger().log(Level.INFO, "Mail Sent Successfully!");
 
 		} catch (MessagingException e) {
-			System.out.println("Mail Sending Failed With Error: " + e.getMessage());
+			Logger.getAnonymousLogger().log(Level.WARNING, "Mail Sending Failed With Error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}

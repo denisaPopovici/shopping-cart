@@ -55,7 +55,6 @@ public class DemandServiceImpl implements DemandService {
 			}
 
 		} catch (SQLException e) {
-			flag = false;
 			e.printStackTrace();
 		}
 
@@ -85,11 +84,8 @@ public class DemandServiceImpl implements DemandService {
 
 			rs = ps.executeQuery();
 
-			// System.out.println("userId "+userId+"\nprodId: "+prodId);
-
 			if (rs.next()) {
 
-				// System.out.println("userId "+userId+"\nprodId: "+prodId);
 				ps2 = con.prepareStatement("delete from  user_demand where username=? and prodid=?");
 
 				ps2.setString(1, userId);
@@ -106,7 +102,6 @@ public class DemandServiceImpl implements DemandService {
 			}
 
 		} catch (SQLException e) {
-			flag = false;
 			e.printStackTrace();
 		}
 
@@ -126,7 +121,7 @@ public class DemandServiceImpl implements DemandService {
 
 	@Override
 	public List<DemandBean> haveDemanded(String prodId) {
-		List<DemandBean> demandList = new ArrayList<DemandBean>();
+		List<DemandBean> demandList = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 

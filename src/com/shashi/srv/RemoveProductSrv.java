@@ -21,6 +21,7 @@ public class RemoveProductSrv extends HttpServlet {
 
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -54,6 +55,7 @@ public class RemoveProductSrv extends HttpServlet {
 
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

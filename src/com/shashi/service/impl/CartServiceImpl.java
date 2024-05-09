@@ -14,6 +14,9 @@ import com.shashi.service.CartService;
 import com.shashi.utility.DBUtil;
 
 public class CartServiceImpl implements CartService {
+	private static final String statement = "select * from usercart where username=? and prodid=?";
+	private static final String quantity = "quantity";
+	private static final String error = "Error: ";
 
 	@Override
 	public String addProductToCart(String userId, String prodId, int prodQty) {
@@ -27,7 +30,7 @@ public class CartServiceImpl implements CartService {
 
 		try {
 
-			ps = con.prepareStatement("select * from usercart where username=? and prodid=?");
+			ps = con.prepareStatement(statement);
 
 			ps.setString(1, userId);
 			ps.setString(2, prodId);
@@ -36,7 +39,7 @@ public class CartServiceImpl implements CartService {
 
 			if (rs.next()) {
 
-				int cartQuantity = rs.getInt("quantity");
+				int cartQuantity = rs.getInt(quantity);
 
 				ProductBean product = new ProductServiceImpl().getProductDetails(prodId);
 
@@ -46,11 +49,11 @@ public class CartServiceImpl implements CartService {
 				//
 				if (availableQty < prodQty) {
 
-					status = updateProductToCart(userId, prodId, availableQty);
+					updateProductToCart(userId, prodId, availableQty);
 
 					status = "Only " + availableQty + " no of " + product.getProdName()
 							+ " are available in the shop! So we are adding only " + availableQty
-							+ " no of that item into Your Cart" + "";
+							+ " no of that item into Your Cart";
 
 					DemandBean demandBean = new DemandBean(userId, product.getProdId(), prodQty - availableQty);
 
@@ -69,7 +72,7 @@ public class CartServiceImpl implements CartService {
 			}
 
 		} catch (SQLException e) {
-			status = "Error: " + e.getMessage();
+			status = error + e.getMessage();
 			e.printStackTrace();
 		}
 
@@ -83,7 +86,7 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public List<CartBean> getAllCartItems(String userId) {
-		List<CartBean> items = new ArrayList<CartBean>();
+		List<CartBean> items = new ArrayList<>();
 
 		Connection con = DBUtil.provideConnection();
 
@@ -103,7 +106,7 @@ public class CartServiceImpl implements CartService {
 
 				cart.setUserId(rs.getString("username"));
 				cart.setProdId(rs.getString("prodid"));
-				cart.setQuantity(Integer.parseInt(rs.getString("quantity")));
+				cart.setQuantity(Integer.parseInt(rs.getString(quantity)));
 
 				items.add(cart);
 
@@ -165,7 +168,7 @@ public class CartServiceImpl implements CartService {
 
 		try {
 
-			ps = con.prepareStatement("select * from usercart where username=? and prodid=?");
+			ps = con.prepareStatement(statement);
 
 			ps.setString(1, userId);
 			ps.setString(2, prodId);
@@ -174,7 +177,7 @@ public class CartServiceImpl implements CartService {
 
 			if (rs.next()) {
 
-				int prodQuantity = rs.getInt("quantity");
+				int prodQuantity = rs.getInt(quantity);
 
 				prodQuantity -= 1;
 
@@ -191,7 +194,7 @@ public class CartServiceImpl implements CartService {
 
 					if (k > 0)
 						status = "Product Successfully removed from the Cart!";
-				} else if (prodQuantity <= 0) {
+				} else {
 
 					ps2 = con.prepareStatement("delete from usercart where username=? and prodid=?");
 
@@ -212,7 +215,7 @@ public class CartServiceImpl implements CartService {
 			}
 
 		} catch (SQLException e) {
-			status = "Error: " + e.getMessage();
+			status = error + e.getMessage();
 			e.printStackTrace();
 		}
 
@@ -245,7 +248,6 @@ public class CartServiceImpl implements CartService {
 				flag = true;
 
 		} catch (SQLException e) {
-			flag = false;
 			e.printStackTrace();
 		}
 
@@ -269,7 +271,7 @@ public class CartServiceImpl implements CartService {
 
 		try {
 
-			ps = con.prepareStatement("select * from usercart where username=? and prodid=?");
+			ps = con.prepareStatement(statement);
 
 			ps.setString(1, userId);
 			ps.setString(2, prodId);
@@ -321,7 +323,7 @@ public class CartServiceImpl implements CartService {
 			}
 
 		} catch (SQLException e) {
-			status = "Error: " + e.getMessage();
+			status = error + e.getMessage();
 			e.printStackTrace();
 		}
 

@@ -8,11 +8,11 @@ public class CartBean implements Serializable {
 	public CartBean() {
 	}
 
-	public String userId;
+	private String userId;
 
-	public String prodId;
+	private String prodId;
 
-	public int quantity;
+	private int quantity;
 
 	public String getUserId() {
 		return userId;
